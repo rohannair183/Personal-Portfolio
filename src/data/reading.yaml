@@ -1,0 +1,11 @@
+updated: 2026-08-28
+items:
+  - title: Attention Is All You Need
+    type: paper
+    status: reading
+    url: https://arxiv.org/abs/1706.03762
+    note: Working through the architecture section by section.
+  - title: The Mom Test
+    type: book
+    status: queued
+    note: For when I start talking to users again.

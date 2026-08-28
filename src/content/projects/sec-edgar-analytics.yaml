@@ -1,0 +1,10 @@
+title: SEC EDGAR insider trading analytics
+slug: sec-edgar-analytics
+date: 2026-05-21
+description: >-
+  Ingests SEC EDGAR financial statement data into BigQuery with Python. dbt
+  models for staging, intermediate, and mart layers, with schema tests and
+  lineage docs across companies and fiscal quarters.
+url: https://github.com/rohannair183/sec-financial-intelligence
+topic: data-engineering
+tags: [python, dbt, bigquery, metabase]

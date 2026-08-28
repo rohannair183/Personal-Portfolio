@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import home from '../data/home.yaml';
+import now from '../data/now.yaml';
+import { getRecentlyUpdated, formatDate } from '../utils/content';
+
+const recent = await getRecentlyUpdated(5);
+const intro = home.intro.trim().replace(/\s+/g, ' ');
+---
+
+<BaseLayout title="Rohan Nair" description={intro}>
+	<section class="home-hero">
+		<img class="home-photo" src={home.photo} alt="Rohan Nair" width="112" height="112" />
+		<div>
+			<h1>{home.name}</h1>
+			<p>{intro}</p>
+		</div>
+	</section>
+
+	<section class="now-strip">
+		<h2>Now</h2>
+		<ul>
+			{now.focus.map((item) => <li>{item}</li>)}
+		</ul>
+		<p class="muted">
+			<a href="/now">Full now page</a> · updated {now.updated}
+		</p>
+	</section>
+
+	<section class="home-recent">
+		<h2>Recently updated</h2>
+		<ul class="recent-list">
+			{
+				recent.map((item) => (
+					<li>
+						<span class="recent-type">{item.type}</span>
+						<a href={item.href}>{item.title}</a>
+						<span class="recent-date">{formatDate(item.date)}</span>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+</BaseLayout>

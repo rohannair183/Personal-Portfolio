@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatDate, getTopicsIndex } from '../../utils/content';
+
+const { sections, other } = await getTopicsIndex();
+---
+
+<BaseLayout title="Topics" description="Notes grouped by topic. What I'm studying and writing about.">
+	<div class="page-header">
+		<h1>Topics</h1>
+		<p class="summary muted">One topic per note. Grouped here by subject.</p>
+	</div>
+
+	{
+		sections.map((section) => (
+			<section class="topic-section" id={section.slug}>
+				<header class="topic-section-header">
+					<h2>
+						<a href={section.href}>{section.title}</a>
+					</h2>
+					{section.description ? <p class="topic-description">{section.description}</p> : null}
+				</header>
+
+				{section.notes.length > 0 ? (
+					<ul class="note-list">
+						{section.notes.map((note) => (
+							<li class="note-list-item">
+								<a href={note.href}>{note.title}</a>
+								<span class="note-date">{formatDate(note.date)}</span>
+							</li>
+						))}
+					</ul>
+				) : (
+					<p class="muted">No notes yet.</p>
+				)}
+			</section>
+		))
+	}
+
+	{
+		other.length > 0 ? (
+			<section class="topic-section" id="other">
+				<header class="topic-section-header">
+					<h2>Other</h2>
+					<p class="topic-description muted">No topic tag yet.</p>
+				</header>
+				<ul class="note-list">
+					{other.map((note) => (
+						<li class="note-list-item">
+							<a href={note.href}>{note.title}</a>
+							<span class="note-date">{formatDate(note.date)}</span>
+						</li>
+					))}
+				</ul>
+			</section>
+		) : null
+	}
+</BaseLayout>

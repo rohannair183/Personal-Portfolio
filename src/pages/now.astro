@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import now from '../data/now.yaml';
+---
+
+<BaseLayout title="Now" description="What I'm focused on right now.">
+	<div class="page-header">
+		<h1>Now</h1>
+		<p class="summary muted">Updated {now.updated}</p>
+	</div>
+	<ul>
+		{now.focus.map((item) => <li>{item}</li>)}
+	</ul>
+</BaseLayout>

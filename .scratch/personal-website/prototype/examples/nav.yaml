@@ -1,0 +1,9 @@
+links:
+  - label: Home
+    href: /
+  - label: Now
+    href: /now
+  - label: Reading
+    href: /reading
+  - label: Resume
+    href: /resume.pdf

@@ -1,0 +1,11 @@
+title: Semantic news pipeline
+slug: semantic-news-pipeline
+date: 2026-05-14
+description: >-
+  Pulls articles from the Guardian API, chunks and embeds them in Supabase
+  pgvector, and uses retrieval to ground Gemini briefings. Orchestrated in YAML
+  with incremental ingestion, Parquet intermediates, and GitHub Actions CI on
+  every push.
+url: https://github.com/rohannair183/semantic_news_pipeline
+topic: data-engineering
+tags: [python, pgvector, gemini, supabase, github-actions]

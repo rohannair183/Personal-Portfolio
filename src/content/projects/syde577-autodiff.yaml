@@ -1,0 +1,10 @@
+title: SYDE 577 autodifferentiation
+slug: syde577-autodiff
+date: 2025-10-10
+description: >-
+  Built autodiff from scratch in NumPy for SYDE 577. Parameter, Input, and op
+  nodes in a computational graph with forward and backward passes, matrix
+  multiply, activations, and a trainer on pickled test parameters.
+url: https://github.com/Josiah-Lam/SYDE577-A1-Autodifferentiation
+topic: machine-learning
+tags: [python, numpy, autodiff, deep-learning]

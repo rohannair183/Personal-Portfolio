@@ -1,0 +1,11 @@
+links:
+  - label: Home
+    href: /
+  - label: Topics
+    href: /topics
+  - label: Projects
+    href: /projects
+  - label: Reading
+    href: /reading
+  - label: Resume
+    href: /resume.pdf

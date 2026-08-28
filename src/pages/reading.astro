@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import reading from '../data/reading.yaml';
+---
+
+<BaseLayout title="Reading" description="Books, papers, and articles I'm reading.">
+	<div class="page-header">
+		<h1>Reading list</h1>
+		<p class="summary muted">Updated {reading.updated}</p>
+	</div>
+
+	{
+		reading.items.map((item) => (
+			<article class="reading-item">
+				<h2>
+					{item.url ? (
+						<a href={item.url}>{item.title}</a>
+					) : (
+						item.title
+					)}
+				</h2>
+				<p class="tag-list">
+					{item.type} · {item.status}
+				</p>
+				{item.note ? <p>{item.note}</p> : null}
+			</article>
+		))
+	}
+</BaseLayout>

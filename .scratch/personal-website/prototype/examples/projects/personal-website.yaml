@@ -1,0 +1,7 @@
+title: Personal website
+slug: personal-website
+date: 2026-08-28
+description: YAML-driven site built with Astro. Gwern-style index, monochrome, no CMS.
+url: https://github.com/rohan-nair/personal-website
+moc: meta
+tags: [web, astro]

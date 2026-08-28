@@ -1,0 +1,10 @@
+title: Brain-to-text decoding
+slug: brain-to-text
+date: 2025-12-03
+description: >-
+  SYDE 577 final project: decode neural signals into text. HDF5 dataloader for
+  brain recordings, swappable LSTM/GRU/RNN/Transformer encoders, CTC loss on
+  phoneme sequences.
+url: https://github.com/rohannair183/577-Final-Brain-to-Text
+topic: machine-learning
+tags: [python, pytorch, lstm, ctc, deep-learning]

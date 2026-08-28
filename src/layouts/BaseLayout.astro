@@ -1,0 +1,41 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import navData from '../data/nav.yaml';
+
+interface Props {
+	title: string;
+	description?: string;
+}
+
+const { title, description = 'Rohan Nair. Learning in public.' } = Astro.props;
+const fullTitle = title === 'Rohan Nair' ? title : `${title} · Rohan Nair`;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content={description} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>{fullTitle}</title>
+		<script is:inline>
+			(function () {
+				const stored = localStorage.getItem('theme');
+				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				const theme = stored ?? (prefersDark ? 'dark' : 'light');
+				document.documentElement.dataset.theme = theme;
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="site-shell">
+			<Header links={navData.links} currentPath={Astro.url.pathname} />
+			<main class="site-main" data-pagefind-body>
+				<slot />
+			</main>
+			<footer class="site-footer">© {new Date().getFullYear()} Rohan Nair</footer>
+		</div>
+	</body>
+</html>

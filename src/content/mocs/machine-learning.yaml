@@ -1,0 +1,13 @@
+title: Machine learning
+slug: machine-learning
+description: Notes, papers, and small ML projects.
+links:
+  - type: log
+    slug: 2025-10-10-autodifferentiation
+    label: Building my own autodiff module
+  - type: project
+    slug: syde577-autodiff
+    label: SYDE 577 autodifferentiation
+  - type: project
+    slug: brain-to-text
+    label: Brain-to-text decoding

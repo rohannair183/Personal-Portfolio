@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatDate, getAllNotes } from '../../utils/content';
+import { resolveMocLink } from '../../utils/moc';
+
+export async function getStaticPaths() {
+	const entries = await getCollection('mocs');
+	return entries.map((entry) => ({
+		params: { slug: entry.data.slug },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+const notes = (await getAllNotes()).filter((note) => note.topic === entry.data.slug);
+const links = entry.data.links
+	.map((link) => ({ ...resolveMocLink(link), external: link.type === 'external' }))
+	.filter((link) => link.external);
+---
+
+<BaseLayout title={entry.data.title} description={entry.data.description ?? entry.data.title}>
+	<a class="back-link" href="/topics">← Topics</a>
+	<header class="page-header">
+		<h1>{entry.data.title}</h1>
+		{entry.data.description ? <p class="summary">{entry.data.description}</p> : null}
+	</header>
+
+	{
+		notes.length > 0 ? (
+			<section>
+				<h2>Notes</h2>
+				<ul class="note-list">
+					{notes.map((note) => (
+						<li class="note-list-item">
+							<a href={note.href}>{note.title}</a>
+							<span class="note-date">{formatDate(note.date)}</span>
+						</li>
+					))}
+				</ul>
+			</section>
+		) : (
+			<p class="muted">No notes yet.</p>
+		)
+	}
+
+	{
+		links.length > 0 ? (
+			<section>
+				<h2>Links</h2>
+				<ul class="note-list">
+					{links.map((link) => (
+						<li class="note-list-item">
+							<a href={link.href} target="_blank" rel="noreferrer">
+								{link.label}
+							</a>
+						</li>
+					))}
+				</ul>
+			</section>
+		) : null
+	}
+</BaseLayout>

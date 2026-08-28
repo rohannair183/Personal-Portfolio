@@ -1,0 +1,191 @@
+---
+interface NavLink {
+	label: string;
+	href: string;
+}
+
+interface Props {
+	links: NavLink[];
+	currentPath: string;
+}
+
+const { links, currentPath } = Astro.props;
+
+function isCurrent(href: string): boolean {
+	if (href === '/') return currentPath === '/';
+	if (href.endsWith('.pdf')) return false;
+	return currentPath === href || currentPath.startsWith(`${href}/`);
+}
+---
+
+<header class="site-header">
+	<div class="header-inner">
+		<nav class="site-nav" aria-label="Main">
+			{
+				links.map((link) => (
+					<a
+						href={link.href}
+						aria-current={isCurrent(link.href) ? 'page' : undefined}
+						target={link.href.endsWith('.pdf') ? '_blank' : undefined}
+						rel={link.href.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
+					>
+						{link.label}
+					</a>
+				))
+			}
+		</nav>
+		<div class="header-tools">
+			<div class="search-wrap" id="search-wrap">
+				<label class="visually-hidden" for="site-search">Search</label>
+				<input
+					class="search-input"
+					id="site-search"
+					type="search"
+					placeholder="Search"
+					autocomplete="off"
+				/>
+				<div class="search-results" id="search-results" role="listbox"></div>
+			</div>
+			<button
+				class="tool-button theme-toggle"
+				id="theme-toggle"
+				type="button"
+				aria-label="Switch to dark mode"
+			>
+				<svg
+					class="theme-icon theme-icon-moon"
+					viewBox="0 0 24 24"
+					width="16"
+					height="16"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.75"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+					focusable="false"
+				>
+					<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+				</svg>
+				<svg
+					class="theme-icon theme-icon-sun"
+					viewBox="0 0 24 24"
+					width="16"
+					height="16"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.75"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+					focusable="false"
+				>
+					<circle cx="12" cy="12" r="4.25"></circle>
+					<path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M18.8 5.2l-1.4 1.4M6.6 17.4l-1.4 1.4"
+					></path>
+				</svg>
+			</button>
+		</div>
+	</div>
+</header>
+
+<script is:inline>
+	(function () {
+		const button = document.getElementById('theme-toggle');
+		if (!button) return;
+		const isDark = document.documentElement.dataset.theme === 'dark';
+		button.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+	})();
+</script>
+
+<style>
+	.visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+</style>
+
+<script>
+	async function initSearch() {
+		const input = document.getElementById('site-search') as HTMLInputElement | null;
+		const results = document.getElementById('search-results');
+		if (!input || !results) return;
+
+		if (import.meta.env.DEV) {
+			input.placeholder = 'Search (build to enable)';
+			input.disabled = true;
+			return;
+		}
+
+		const pagefindPath = '/pagefind/pagefind.js';
+		const pagefind = await import(/* @vite-ignore */ pagefindPath);
+		await pagefind.init();
+
+		let timer: number | undefined;
+
+		const render = async (query: string) => {
+			if (!query.trim()) {
+				results.classList.remove('is-open');
+				results.innerHTML = '';
+				return;
+			}
+
+			const search = await pagefind.search(query);
+			const items = await Promise.all(search.results.slice(0, 8).map((r: { data: () => Promise<{ url: string; meta: { title?: string }; excerpt: string }> }) => r.data()));
+
+			if (items.length === 0) {
+				results.innerHTML = '<div class="search-result"><span class="search-result-excerpt">No results.</span></div>';
+			} else {
+				results.innerHTML = items
+					.map(
+						(item) => `
+						<a class="search-result" href="${item.url}">
+							<span class="search-result-title">${item.meta.title ?? 'Page'}</span>
+							<span class="search-result-excerpt">${item.excerpt}</span>
+						</a>`,
+					)
+					.join('');
+			}
+
+			results.classList.add('is-open');
+		};
+
+		input.addEventListener('input', () => {
+			window.clearTimeout(timer);
+			timer = window.setTimeout(() => render(input.value), 200);
+		});
+
+		document.addEventListener('click', (event) => {
+			const target = event.target as Node;
+			if (!document.getElementById('search-wrap')?.contains(target)) {
+				results.classList.remove('is-open');
+			}
+		});
+	}
+
+	function initTheme() {
+		const button = document.getElementById('theme-toggle');
+		if (!button) return;
+
+		button.addEventListener('click', () => {
+			const root = document.documentElement;
+			const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+			root.dataset.theme = next;
+			localStorage.setItem('theme', next);
+			button.setAttribute(
+				'aria-label',
+				next === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
+			);
+		});
+	}
+
+	initTheme();
+	initSearch();
+</script>

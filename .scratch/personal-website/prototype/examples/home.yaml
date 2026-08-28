@@ -1,0 +1,25 @@
+name: Rohan Nair
+photo: /images/rohan.jpg
+intro: |
+  I like learning in public. This site is where I organize what I'm studying,
+  what I've built, and the threads I'm still pulling on. If you're hiring,
+  you'll get a better read from my notes than from a project list alone.
+topic_index:
+  - title: Machine learning
+    links:
+      - label: Machine learning MOC
+        href: /mocs/machine-learning
+  - title: Meta
+    links:
+      - label: Why I keep a learning log
+        href: /essays/why-i-keep-a-learning-log
+      - label: Personal website project
+        href: /projects/personal-website
+  - title: Site
+    links:
+      - label: Now
+        href: /now
+      - label: Reading list
+        href: /reading
+      - label: Resume (PDF)
+        href: /resume.pdf

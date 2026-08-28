@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getIndexItems, formatDate } from '../../utils/content';
+
+const items = await getIndexItems('project');
+---
+
+<BaseLayout title="Projects" description="Things I've built, newest first.">
+	<div class="page-header">
+		<h1>Projects</h1>
+		<p class="summary muted">Newest first.</p>
+	</div>
+
+	{
+		items.length === 0 ? (
+			<p class="muted">Nothing published yet.</p>
+		) : (
+			items.map((item) => (
+				<article class="index-item">
+					<h2>
+						<a href={item.href}>{item.title}</a>
+					</h2>
+					<p class="tag-list">{formatDate(item.date)}</p>
+					<p>{item.summary}</p>
+				</article>
+			))
+		)
+	}
+</BaseLayout>

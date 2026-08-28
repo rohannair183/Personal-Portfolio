@@ -1,0 +1,12 @@
+title: NoteWorth
+slug: noteworthy
+date: 2026-07-23
+description: >-
+  MSE capstone for pediatric speech-language clinics. LLMs extract clinical
+  signals from therapy notes, one numeric record per client, with leakage
+  windows so each feature only sees allowed sessions. YAML signal registry,
+  Streamlit ops UI, FastAPI + Next.js clinic app, Compute Canada batch runs,
+  LLM judge validation, Supabase publishing.
+url: https://github.com/MSECapstoneProject/Capstone
+topic: capstone
+tags: [python, llm, streamlit, fastapi, supabase, capstone]
