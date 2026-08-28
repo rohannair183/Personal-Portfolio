@@ -24,7 +24,7 @@ Search only works after a production build (`npm run build && npm run preview`).
 | Reading list | `src/data/reading.yaml` | edit in place |
 | Home copy / topic index | `src/data/home.yaml` | edit in place |
 | Nav | `src/data/nav.yaml` | edit in place |
-| Photo | `public/images/rohan.svg` | replace with your photo |
+| Photo | `public/images/rohan.jpg` | replace with your photo |
 | Resume | `public/resume.pdf` | replace with your PDF |
 
 See `.scratch/personal-website/prototype/content-model.md` for field schemas.
