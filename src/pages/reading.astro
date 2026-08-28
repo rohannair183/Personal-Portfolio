@@ -14,7 +14,9 @@ import reading from '../data/reading.yaml';
 			<article class="reading-item">
 				<h2>
 					{item.url ? (
-						<a href={item.url}>{item.title}</a>
+						<a href={item.url} target="_blank" rel="noreferrer">
+							{item.title}
+						</a>
 					) : (
 						item.title
 					)}

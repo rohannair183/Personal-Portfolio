@@ -343,7 +343,7 @@ ol {
 
 .recent-list li {
 	display: grid;
-	grid-template-columns: 4.5rem 1fr auto;
+	grid-template-columns: 1fr auto;
 	gap: 0.15rem 1rem;
 	align-items: baseline;
 	padding: 0.55rem 0;
@@ -358,11 +358,11 @@ ol {
 
 @media (max-width: 560px) {
 	.recent-list li {
-		grid-template-columns: 4.5rem 1fr;
+		grid-template-columns: 1fr;
 	}
 
 	.recent-date {
-		grid-column: 2;
+		grid-column: 1;
 	}
 }
 
@@ -441,6 +441,29 @@ ol {
 	font-size: 0.85rem;
 	color: var(--muted);
 	flex-shrink: 0;
+}
+
+.book-group {
+	margin-bottom: 1.5rem;
+}
+
+.book-group:last-child {
+	margin-bottom: 0;
+}
+
+.book-group-title {
+	font-family: var(--font-sans);
+	font-size: 1rem;
+	font-weight: 600;
+	margin: 0 0 0.35rem;
+}
+
+.book-group-title a {
+	text-decoration: none;
+}
+
+.book-group-title a:hover {
+	text-decoration: underline;
 }
 
 .tag-list {

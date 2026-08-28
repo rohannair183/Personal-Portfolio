@@ -1,0 +1,52 @@
+---
+import { formatDate } from '../utils/content';
+import type { BookGroup, Note } from '../utils/content';
+
+interface Props {
+	groups: BookGroup[];
+	ungrouped: Note[];
+}
+
+const { groups, ungrouped } = Astro.props;
+const hasNotes = groups.length > 0 || ungrouped.length > 0;
+---
+
+{
+	hasNotes ? (
+		<>
+			{groups.map((group) => (
+				<div class="book-group">
+					<h3 class="book-group-title">
+						{group.url ? (
+							<a href={group.url} target="_blank" rel="noreferrer">
+								{group.title}
+							</a>
+						) : (
+							group.title
+						)}
+					</h3>
+					<ul class="note-list">
+						{group.notes.map((note) => (
+							<li class="note-list-item">
+								<a href={note.href}>{note.title}</a>
+								<span class="note-date">{formatDate(note.date)}</span>
+							</li>
+						))}
+					</ul>
+				</div>
+			))}
+			{ungrouped.length > 0 ? (
+				<ul class="note-list">
+					{ungrouped.map((note) => (
+						<li class="note-list-item">
+							<a href={note.href}>{note.title}</a>
+							<span class="note-date">{formatDate(note.date)}</span>
+						</li>
+					))}
+				</ul>
+			) : null}
+		</>
+	) : (
+		<p class="muted">No notes yet.</p>
+	)
+}

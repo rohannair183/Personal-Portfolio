@@ -1,7 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { formatDate, getAllNotes } from '../../utils/content';
+import TopicNotes from '../../components/TopicNotes.astro';
+import { getAllNotes, groupNotesByReading } from '../../utils/content';
 import { resolveMocLink } from '../../utils/moc';
 
 export async function getStaticPaths() {
@@ -14,6 +15,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const notes = (await getAllNotes()).filter((note) => note.topic === entry.data.slug);
+const { groups, ungrouped } = groupNotesByReading(notes);
 const links = entry.data.links
 	.map((link) => ({ ...resolveMocLink(link), external: link.type === 'external' }))
 	.filter((link) => link.external);
@@ -26,23 +28,10 @@ const links = entry.data.links
 		{entry.data.description ? <p class="summary">{entry.data.description}</p> : null}
 	</header>
 
-	{
-		notes.length > 0 ? (
-			<section>
-				<h2>Notes</h2>
-				<ul class="note-list">
-					{notes.map((note) => (
-						<li class="note-list-item">
-							<a href={note.href}>{note.title}</a>
-							<span class="note-date">{formatDate(note.date)}</span>
-						</li>
-					))}
-				</ul>
-			</section>
-		) : (
-			<p class="muted">No notes yet.</p>
-		)
-	}
+	<section>
+		<h2>Notes</h2>
+		<TopicNotes groups={groups} ungrouped={ungrouped} />
+	</section>
 
 	{
 		links.length > 0 ? (

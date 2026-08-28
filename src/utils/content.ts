@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import reading from '../data/reading.yaml';
 
 export type RecentItem = {
 	type: 'log' | 'essay' | 'project';
@@ -53,14 +54,6 @@ export async function getIndexItems(type: RecentItem['type']): Promise<RecentIte
 	}
 }
 
-export async function getRecentlyUpdated(limit = 5): Promise<RecentItem[]> {
-	const groups = await Promise.all(
-		(['log', 'essay', 'project'] as const).map((type) => getIndexItems(type)),
-	);
-
-	return byNewest(groups.flat()).slice(0, limit);
-}
-
 export function formatDate(date: Date): string {
 	return date.toLocaleDateString('en-US', {
 		year: 'numeric',
@@ -86,6 +79,14 @@ export type Note = {
 	date: Date;
 	href: string;
 	topic?: string;
+	reading?: string;
+};
+
+export type BookGroup = {
+	slug: string;
+	title: string;
+	url?: string;
+	notes: Note[];
 };
 
 export type TopicSection = {
@@ -93,8 +94,13 @@ export type TopicSection = {
 	title: string;
 	description?: string;
 	href: string;
-	notes: Note[];
+	groups: BookGroup[];
+	ungrouped: Note[];
 };
+
+const readingBySlug = new Map(
+	reading.items.map((item) => [item.slug, { title: item.title, url: item.url }]),
+);
 
 function toNotes(
 	logs: Awaited<ReturnType<typeof getCollection<'logs'>>>,
@@ -107,6 +113,7 @@ function toNotes(
 			date: entry.data.date,
 			href: `/logs/${entry.id}`,
 			topic: entry.data.topic,
+			reading: entry.data.reading,
 		})),
 		...essays.map((entry) => ({
 			title: entry.data.title,
@@ -114,12 +121,42 @@ function toNotes(
 			date: entry.data.date,
 			href: `/essays/${entry.id}`,
 			topic: entry.data.topic,
+			reading: entry.data.reading,
 		})),
 	];
 }
 
 function byNewestNotes(notes: Note[]): Note[] {
 	return [...notes].sort((a, b) => b.date.getTime() - a.date.getTime());
+}
+
+export function groupNotesByReading(notes: Note[]): { groups: BookGroup[]; ungrouped: Note[] } {
+	const grouped = new Map<string, Note[]>();
+	const ungrouped: Note[] = [];
+
+	for (const note of notes) {
+		if (note.reading && readingBySlug.has(note.reading)) {
+			const list = grouped.get(note.reading) ?? [];
+			list.push(note);
+			grouped.set(note.reading, list);
+		} else {
+			ungrouped.push(note);
+		}
+	}
+
+	const groups: BookGroup[] = [...grouped.entries()]
+		.map(([slug, groupNotes]) => {
+			const item = readingBySlug.get(slug)!;
+			return {
+				slug,
+				title: item.title,
+				url: item.url,
+				notes: byNewestNotes(groupNotes),
+			};
+		})
+		.sort((a, b) => b.notes[0]!.date.getTime() - a.notes[0]!.date.getTime());
+
+	return { groups, ungrouped: byNewestNotes(ungrouped) };
 }
 
 export async function getAllNotes(): Promise<Note[]> {
@@ -131,6 +168,11 @@ export async function getAllNotes(): Promise<Note[]> {
 	return byNewestNotes(toNotes(logs, essays));
 }
 
+export async function getRecentlyUpdated(limit = 5): Promise<Note[]> {
+	const notes = await getAllNotes();
+	return notes.filter((note) => note.topic).slice(0, limit);
+}
+
 export async function getTopicsIndex(): Promise<{ sections: TopicSection[]; other: Note[] }> {
 	const [mocs, notes] = await Promise.all([getCollection('mocs'), getAllNotes()]);
 
@@ -138,13 +180,19 @@ export async function getTopicsIndex(): Promise<{ sections: TopicSection[]; othe
 
 	const sections: TopicSection[] = mocs
 		.sort((a, b) => a.data.title.localeCompare(b.data.title))
-		.map((topic) => ({
-			slug: topic.data.slug,
-			title: topic.data.title,
-			description: topic.data.description,
-			href: `/mocs/${topic.data.slug}`,
-			notes: byNewestNotes(notes.filter((note) => note.topic === topic.data.slug)),
-		}));
+		.map((topic) => {
+			const topicNotes = notes.filter((note) => note.topic === topic.data.slug);
+			const { groups, ungrouped } = groupNotesByReading(topicNotes);
+
+			return {
+				slug: topic.data.slug,
+				title: topic.data.title,
+				description: topic.data.description,
+				href: `/mocs/${topic.data.slug}`,
+				groups,
+				ungrouped,
+			};
+		});
 
 	const other = byNewestNotes(
 		notes.filter((note) => !note.topic || !topicSlugs.has(note.topic)),

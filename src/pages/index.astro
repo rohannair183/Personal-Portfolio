@@ -31,11 +31,10 @@ const intro = home.intro.trim().replace(/\s+/g, ' ');
 		<h2>Recently updated</h2>
 		<ul class="recent-list">
 			{
-				recent.map((item) => (
+				recent.map((note) => (
 					<li>
-						<span class="recent-type">{item.type}</span>
-						<a href={item.href}>{item.title}</a>
-						<span class="recent-date">{formatDate(item.date)}</span>
+						<a href={note.href}>{note.title}</a>
+						<span class="recent-date">{formatDate(note.date)}</span>
 					</li>
 				))
 			}

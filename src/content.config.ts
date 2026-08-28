@@ -7,6 +7,7 @@ const proseSchema = z.object({
 	summary: z.string(),
 	tags: z.array(z.string()).optional(),
 	topic: z.string().optional(),
+	reading: z.string().optional(),
 	draft: z.boolean().default(false),
 });
 
