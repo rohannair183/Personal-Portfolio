@@ -297,7 +297,6 @@ ol {
 	height: 7rem;
 	object-fit: cover;
 	border: 1px solid var(--border);
-	filter: grayscale(100%);
 }
 
 .home-recent h2 {
