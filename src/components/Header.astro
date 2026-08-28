@@ -124,8 +124,18 @@ function isCurrent(href: string): boolean {
 			return;
 		}
 
-		const pagefindPath = '/pagefind/pagefind.js';
-		const pagefind = await import(/* @vite-ignore */ pagefindPath);
+		// pagefind.js is generated at build time by astro-pagefind and only
+		// exists in the final output. Load it via an indirect import so Vite
+		// does not try to bundle it — a direct `import()` gets wrapped in a
+		// preload helper that references an undefined `__VITE_PRELOAD__` and
+		// throws before search ever initializes.
+		const importPagefind = new Function(
+			'return import("/pagefind/pagefind.js")',
+		) as () => Promise<{
+			init: () => Promise<void>;
+			search: (query: string) => Promise<{ results: Array<{ data: () => Promise<{ url: string; meta: { title?: string }; excerpt: string }> }> }>;
+		}>;
+		const pagefind = await importPagefind();
 		await pagefind.init();
 
 		let timer: number | undefined;
