@@ -1,13 +1,19 @@
 updated: 2026-08-28
 items:
-  - slug: attention-is-all-you-need
-    title: Attention Is All You Need
-    type: paper
-    status: reading
-    url: https://arxiv.org/abs/1706.03762
-    note: Working through the architecture section by section.
-  - slug: the-mom-test
-    title: The Mom Test
+  - slug: programming-massively-parallel-processors
+    title: Programming Massively Parallel Processors
     type: book
-    status: queued
-    note: For when I start talking to users again.
+    category: technical
+    status: reading
+    note: Just finished chapter one.
+  - slug: the-iliad-emily-wilson
+    title: The Iliad (Emily Wilson Translation)
+    type: book
+    category: leisure
+    status: reading
+  - slug: imperium-cicero-trilogy
+    title: Imperium
+    type: book
+    category: leisure
+    status: reading
+    note: From the Cicero Trilogy.

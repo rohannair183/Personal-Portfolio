@@ -33,7 +33,12 @@ const intro = home.intro.trim().replace(/\s+/g, ' ');
 			{
 				recent.map((note) => (
 					<li>
-						<a href={note.href}>{note.title}</a>
+						<div class="recent-item-main">
+							<a class="recent-topic" href={note.topicHref}>
+								{note.topicTitle}
+							</a>
+							<a href={note.href}>{note.title}</a>
+						</div>
 						<span class="recent-date">{formatDate(note.date)}</span>
 					</li>
 				))

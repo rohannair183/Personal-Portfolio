@@ -1,6 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import reading from '../data/reading.yaml';
+
+const categories = [
+	{ key: 'technical', label: 'Technical' },
+	{ key: 'leisure', label: 'Leisure' },
+] as const;
 ---
 
 <BaseLayout title="Reading" description="Books, papers, and articles I'm reading.">
@@ -10,22 +15,35 @@ import reading from '../data/reading.yaml';
 	</div>
 
 	{
-		reading.items.map((item) => (
-			<article class="reading-item">
-				<h2>
-					{item.url ? (
-						<a href={item.url} target="_blank" rel="noreferrer">
-							{item.title}
-						</a>
-					) : (
-						item.title
-					)}
-				</h2>
-				<p class="tag-list">
-					{item.type} · {item.status}
-				</p>
-				{item.note ? <p>{item.note}</p> : null}
-			</article>
-		))
+		categories.map((category) => {
+			const items = reading.items.filter((item) => item.category === category.key);
+			if (items.length === 0) return null;
+
+			return (
+				<section class="topic-section">
+					<header class="topic-section-header">
+						<h2>{category.label}</h2>
+					</header>
+
+					{items.map((item) => (
+						<article class="reading-item">
+							<h3>
+								{item.url ? (
+									<a href={item.url} target="_blank" rel="noreferrer">
+										{item.title}
+									</a>
+								) : (
+									item.title
+								)}
+							</h3>
+							<p class="tag-list">
+								{item.type} · {item.status}
+							</p>
+							{item.note ? <p>{item.note}</p> : null}
+						</article>
+					))}
+				</section>
+			);
+		})
 	}
 </BaseLayout>

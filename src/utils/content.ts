@@ -82,6 +82,16 @@ export type Note = {
 	reading?: string;
 };
 
+export type DatedNote = Note & {
+	topicTitle?: string;
+	topicHref?: string;
+};
+
+export type RecentNote = Note & {
+	topicTitle: string;
+	topicHref: string;
+};
+
 export type BookGroup = {
 	slug: string;
 	title: string;
@@ -168,9 +178,44 @@ export async function getAllNotes(): Promise<Note[]> {
 	return byNewestNotes(toNotes(logs, essays));
 }
 
-export async function getRecentlyUpdated(limit = 5): Promise<Note[]> {
-	const notes = await getAllNotes();
-	return notes.filter((note) => note.topic).slice(0, limit);
+function humanizeSlug(slug: string): string {
+	return slug
+		.split('-')
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
+}
+
+export async function getTopicMap(): Promise<Map<string, { title: string; href: string }>> {
+	const mocs = await getCollection('mocs');
+	return new Map(
+		mocs.map((topic) => [
+			topic.data.slug,
+			{ title: topic.data.title, href: `/mocs/${topic.data.slug}` },
+		]),
+	);
+}
+
+export async function getNotesByDate(): Promise<DatedNote[]> {
+	const [notes, topicMap] = await Promise.all([getAllNotes(), getTopicMap()]);
+
+	return notes.map((note) => {
+		if (!note.topic) return note;
+		const topic = topicMap.get(note.topic);
+		return {
+			...note,
+			topicTitle: topic?.title ?? humanizeSlug(note.topic),
+			topicHref: topic?.href ?? `/topics#${note.topic}`,
+		};
+	});
+}
+
+function hasTopic(note: DatedNote): note is RecentNote {
+	return note.topicTitle !== undefined && note.topicHref !== undefined;
+}
+
+export async function getRecentlyUpdated(limit = 5): Promise<RecentNote[]> {
+	const notes = await getNotesByDate();
+	return notes.filter(hasTopic).slice(0, limit);
 }
 
 export async function getTopicsIndex(): Promise<{ sections: TopicSection[]; other: Note[] }> {

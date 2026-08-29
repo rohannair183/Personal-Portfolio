@@ -1,48 +1,107 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TopicNotes from '../../components/TopicNotes.astro';
-import { formatDate, getTopicsIndex } from '../../utils/content';
+import { formatDate, getNotesByDate, getTopicsIndex } from '../../utils/content';
 
-const { sections, other } = await getTopicsIndex();
+const [{ sections, other }, chronological] = await Promise.all([
+	getTopicsIndex(),
+	getNotesByDate(),
+]);
 ---
 
 <BaseLayout title="Topics" description="Notes grouped by topic. What I'm studying and writing about.">
 	<div class="page-header">
 		<h1>Topics</h1>
-		<p class="summary muted">One topic per note. Grouped here by subject.</p>
+		<p class="summary muted">One topic per note. Read them by subject or by date.</p>
 	</div>
 
-	{
-		sections.map((section) => (
-			<section class="topic-section" id={section.slug}>
-				<header class="topic-section-header">
-					<h2>
-						<a href={section.href}>{section.title}</a>
-					</h2>
-					{section.description ? <p class="topic-description">{section.description}</p> : null}
-				</header>
+	<div class="view-switch" role="group" aria-label="View">
+		<button type="button" data-view-option="topic" aria-pressed="true">By topic</button>
+		<button type="button" data-view-option="date" aria-pressed="false">Latest first</button>
+	</div>
 
-				<TopicNotes groups={section.groups} ungrouped={section.ungrouped} />
-			</section>
-		))
-	}
+	<script is:inline>
+		(function () {
+			// A hash link points at a topic section, so honour it over the stored view.
+			if (location.hash) return;
+			const stored = localStorage.getItem('topics-view');
+			if (stored !== 'topic' && stored !== 'date') return;
+			document.documentElement.dataset.topicsView = stored;
+			for (const button of document.querySelectorAll('[data-view-option]')) {
+				button.setAttribute('aria-pressed', String(button.dataset.viewOption === stored));
+			}
+		})();
+	</script>
 
-	{
-		other.length > 0 ? (
-			<section class="topic-section" id="other">
-				<header class="topic-section-header">
-					<h2>Other</h2>
-					<p class="topic-description muted">No topic tag yet.</p>
-				</header>
-				<ul class="note-list">
-					{other.map((note) => (
-						<li class="note-list-item">
+	<div class="topics-view topics-view-topic">
+		{
+			sections.map((section) => (
+				<section class="topic-section" id={section.slug}>
+					<header class="topic-section-header">
+						<h2>
+							<a href={section.href}>{section.title}</a>
+						</h2>
+						{section.description ? <p class="topic-description">{section.description}</p> : null}
+					</header>
+
+					<TopicNotes groups={section.groups} ungrouped={section.ungrouped} />
+				</section>
+			))
+		}
+
+		{
+			other.length > 0 ? (
+				<section class="topic-section" id="other">
+					<header class="topic-section-header">
+						<h2>Other</h2>
+						<p class="topic-description muted">No topic tag yet.</p>
+					</header>
+					<ul class="note-list">
+						{other.map((note) => (
+							<li class="note-list-item">
+								<a href={note.href}>{note.title}</a>
+								<span class="note-date">{formatDate(note.date)}</span>
+							</li>
+						))}
+					</ul>
+				</section>
+			) : null
+		}
+	</div>
+
+	<div class="topics-view topics-view-date" data-pagefind-ignore>
+		<ul class="recent-list">
+			{
+				chronological.map((note) => (
+					<li>
+						<div class="recent-item-main">
+							{note.topicHref ? (
+								<a class="recent-topic" href={note.topicHref}>
+									{note.topicTitle}
+								</a>
+							) : (
+								<span class="recent-topic">Untagged</span>
+							)}
 							<a href={note.href}>{note.title}</a>
-							<span class="note-date">{formatDate(note.date)}</span>
-						</li>
-					))}
-				</ul>
-			</section>
-		) : null
-	}
+						</div>
+						<span class="recent-date">{formatDate(note.date)}</span>
+					</li>
+				))
+			}
+		</ul>
+	</div>
 </BaseLayout>
+
+<script>
+	for (const button of document.querySelectorAll<HTMLButtonElement>('[data-view-option]')) {
+		button.addEventListener('click', () => {
+			const view = button.dataset.viewOption;
+			if (view !== 'topic' && view !== 'date') return;
+			document.documentElement.dataset.topicsView = view;
+			localStorage.setItem('topics-view', view);
+			for (const other of document.querySelectorAll<HTMLButtonElement>('[data-view-option]')) {
+				other.setAttribute('aria-pressed', String(other.dataset.viewOption === view));
+			}
+		});
+	}
+</script>
