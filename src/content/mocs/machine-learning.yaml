@@ -11,3 +11,12 @@ links:
   - type: project
     slug: brain-to-text
     label: Brain-to-text decoding
+  - type: log
+    slug: 2025-12-03-brain-to-text-setup
+    label: Setting up the brain-to-text pipeline
+  - type: project
+    slug: syde577-a2-cnn-mnist
+    label: SYDE 577 CNN for MNIST
+  - type: log
+    slug: 2025-10-31-cnn-mnist-optuna-search
+    label: Searching CNN architectures with Optuna instead of guessing

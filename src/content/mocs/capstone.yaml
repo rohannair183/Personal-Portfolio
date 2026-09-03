@@ -5,3 +5,6 @@ links:
   - type: project
     slug: noteworthy
     label: NoteWorthy
+  - type: log
+    slug: 2026-09-03-capstone-current-process
+    label: Where NoteWorthy stands, and where LLMs actually help
