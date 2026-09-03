@@ -1,0 +1,12 @@
+title: SYDE 577 CNN for MNIST
+slug: syde577-a2-cnn-mnist
+date: 2025-10-31
+description: >-
+  SYDE 577 assignment two: get a convolutional net past 99% test accuracy on
+  MNIST. Started from an MLP baseline, then built a configurable CNN with
+  variable kernel size, dilation, and depth, and searched it with Optuna over
+  five pruned trials. Best run: 99.25% validation accuracy with four conv
+  layers, a 7x7 kernel, no pooling.
+url: https://github.com/rohannair183/SYDE-577-A2-CNN-MNIST
+topic: machine-learning
+tags: [python, pytorch, cnn, optuna, deep-learning]

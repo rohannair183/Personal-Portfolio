@@ -1,0 +1,13 @@
+title: Data engineering
+slug: data-engineering
+description: Pipelines, dbt models, and lessons from co-ops spent moving data around.
+links:
+  - type: project
+    slug: sec-edgar-analytics
+    label: SEC EDGAR insider trading analytics
+  - type: project
+    slug: semantic-news-pipeline
+    label: Semantic news pipeline
+  - type: log
+    slug: 2026-04-30-gore-mutual-coop
+    label: Four months as a data engineer at Gore Mutual
